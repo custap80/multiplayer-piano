@@ -1,0 +1,9 @@
+{
+  "name": "multiplayer-piano",
+  "version": "0.0.1",
+  "description": "Realtime Web Piano multiplayer",
+  "dependencies": {
+    "express": "^4.18.2",
+    "socket.io": "^4.7.2"
+  }
+}

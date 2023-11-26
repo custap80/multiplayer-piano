@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="icon" href="data:;base64,iVBORw0KGgo=">
+	<title>Piano D</title>
+	<link rel="stylesheet" type="text/css" href="/keyboard.css">
+	<script src="https://unpkg.com/tone"></script>
+	<!-- <script>window.Tone || document.write('<script src="/Tone.js"><\/script>')</script> -->
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="/bindings.js"></script>
+	<script>
+		var socket = io();
+		bindingOctCom();
+
+
+
+
+		// make instrument from samples
+		const sampler = new Tone.Sampler({
+			urls: {
+				"A3": "A3.mp3",
+				"A4": "A4.mp3",
+				"A#5": "A-5.mp3",
+				"B2": "B2.mp3",
+				"B5": "B5.mp3",
+				"B6": "B6.mp3",
+				"C1": "C1.mp3",
+				"C#1": "C-1.mp3",
+				"C2": "C2.mp3",
+				"C3": "C3.mp3",
+				"C#3": "C-3.mp3",
+				"C4": "C4.mp3",
+				"C5": "C5.mp3",
+				"C7": "C7.mp3",
+				"D2": "D2.mp3",
+				"D#3": "D-3.mp3",
+				"D4": "D4.mp3",
+				"D#6": "D-6.mp3",
+				"D#6": "D-6.mp3",
+				"E3": "E3.mp3",
+				"F5": "F5.mp3",
+				"F6": "F6.mp3",
+				"G1": "G1.mp3",
+				"G3": "G3.mp3",
+			},
+			volume: -15,
+			release: 11,
+			releaseCurve: [1, 0.5,0.2,0.1, 0],
+			baseUrl: "/samples/",
+		}).toDestination();
+	</script>
+</head>
+<body>
+	<div class="content">
+		<div class="wrapper">
+			<div class="tests">
+				<div>
+					<span>Test buttons (sustained) : </span>
+					<button onclick="playSample(sampler, 'C5')">C5</button>
+					<button onclick="playSample(sampler, 'E5')">E5</button>
+					<button onclick="playSample(sampler, 'G5')">G5</button>
+					<button onclick="sampler.releaseAll();">Release sound</button>
+					<span id="loaded">Loading piano...</span>
+				</div>
+				<div>
+					<button onclick="fullScr()" id="fullScreen">Mobile mode</button>
+					<button onclick="keyboardSwitch()" id="hideKeyboard">Hide Keyboard</button>
+					<button onclick="pianoSwitch()" id="hidePiano">Hide Piano</button>
+				</div>
+			</div>
+			<div class="tests" style="gap: 1rem;justify-content: start;">
+				User online :
+				<div id="userOnline">
+					
+				</div>
+			</div>
+			<div class="tests2">
+				<div class="item">
+					Octave : &nbsp;
+					<button onclick="octaveDown(1)">Down</button>
+					<span class="displays" id="octaveMsg">0</span>
+					<button onclick="octaveUp(2)">Up</button>
+				</div>
+				<div class="item">
+					Pitch : &nbsp;
+					<button onclick="pitchDown()">Down</button>
+					<span class="displays" id="pitchMsg">0</span>
+					<button onclick="pitchUp()">Up</button>
+				</div>
+				<div class="item">
+					Volume &nbsp;&nbsp;
+					<input class="fxvol" type="range" id="volumeOut" min="-25" max="10" value="-23">
+					<span class="displays1" id="volumeOutDis"></span>dB
+				</div>
+			</div>
+			<div class="p-wrapper">
+				<div class="keyboard-base" id="keyBase">
+					<div class="key disabled"></div>
+					<div class="key b-keys" id="Digit1">1</div>
+					<div class="key b-keys" id="Digit2">2</div>
+					<div class="key disabled"></div>
+					<div class="key b-keys" id="Digit4">4</div>
+					<div class="key b-keys" id="Digit5">5</div>
+					<div class="key b-keys" id="Digit6">6</div>
+					<div class="key disabled"></div>
+					<div class="key b-keys" id="Digit8">8</div>
+					<div class="key b-keys" id="Digit9">9</div>
+					<div class="key disabled"></div>
+					<div class="key b-keys" id="Minus">-</div>
+					<div class="key b-keys" id="Equal">=</div>
+					<div class="key return b-keys" id="Backspace">Backspace</div>
+					<div class="key tab c" id="Tab">Tab</div>
+					<div class="key" id="KeyQ">Q</div>
+					<div class="key" id="KeyW">W</div>
+					<div class="key" id="KeyE">E</div>
+					<div class="key" id="KeyR">R</div>
+					<div class="key" id="KeyT">T</div>
+					<div class="key" id="KeyY">Y</div>
+					<div class="key c" id="KeyU">U</div>
+					<div class="key" id="KeyI">I</div>
+					<div class="key" id="KeyO">O</div>
+					<div class="key" id="KeyP">P</div>
+					<div class="key" id="BracketLeft">[</div>
+					<div class="key" id="BracketRight">]</div>
+					<div class="key tab" id="Backslash">\</div>
+					<div class="key return b-keys" id="CapsLock">CapsLock</div>
+					<div class="key disabled"></div>
+					<div class="key b-keys" id="KeyS">S</div>
+					<div class="key b-keys" id="KeyD">D</div>
+					<div class="key b-keys" id="KeyF">F</div>
+					<div class="key disabled"></div>
+					<div class="key b-keys" id="KeyH">H</div>
+					<div class="key b-keys" id="KeyJ">J</div>
+					<div class="key disabled"></div>
+					<div class="key b-keys" id="KeyL">L</div>
+					<div class="key b-keys" id="Semicolon">;</div>
+					<div class="key b-keys" id="Quote">'</div>
+					<div class="key return disabled"></div>
+					<div class="key shift" id="ShiftLeft">Shift</div>
+					<div class="key" id="KeyZ">Z</div>
+					<div class="key" id="KeyX">X</div>
+					<div class="key" id="KeyC">C</div>
+					<div class="key" id="KeyV">V</div>
+					<div class="key c" id="KeyB">B</div>
+					<div class="key" id="KeyN">N</div>
+					<div class="key" id="KeyM">M</div>
+					<div class="key" id="Comma">,</div>
+					<div class="key" id="Period">.</div>
+					<div class="key" id="Slash">/</div>
+					<div class="key shift" id="ShiftRight">Shift</div>
+				</div>
+			</div>
+
+			<div id="content-scroll">
+				<div id="content"></div>
+				<div id="lineindicator"></div>
+			</div>
+
+			<div class="footer">
+				<button class="m-auto" onclick="changePianoMode()">Keyboard mode : &nbsp;<span id="pianoModes">Combined</span></button>
+			</div>
+
+			<!-- <div class="text-banner">
+				<small>Keyboard layout by freefrontend.com</small>
+			</div> -->
+		</div>
+		</div>
+	</div>
+
+	<script src="/controls.js"></script>
+	<script src="/instrControls.js"></script>
+	<script src="/toneui.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="/pianoMon.js"></script>
+
+	<script type="text/javascript">
+		// Check loop if piano loaded every 1sec, if yes stop the interval
+		document.getElementById('keyBase').classList.add('none');
+		showPianoKeys(sampler);
+		mouseMap(sampler);
+		keyboardMapping(sampler);
+		const loadInterval = setInterval( () => {
+			if (sampler.loaded) {
+				document.getElementById('loaded').innerHTML = "Loaded!";
+				document.getElementById('keyBase').classList.remove('none');
+				
+				// stop the interval
+				clearInterval(loadInterval);
+			}
+		}, 1000);
+
+		const username = prompt('Any username : ');
+		if (username === null) {
+			socket.emit('checkuser', 'Anonymous');
+		}
+		socket.emit('checkuser', username);
+
+		socket.on('checkuser', (userObject) => {
+			document.getElementById('userOnline').innerHTML="";
+			for (const socketId in userObject) {
+				var div = document.createElement("div");
+				div.setAttribute('id',socketId);
+				div.classList.add('users');
+				div.innerHTML = userObject[socketId];
+				document.getElementById('userOnline').appendChild(div);
+			}
+		});
+
+		socket.on('whatuser', () => {
+			socket.emit('checkuser', username);
+		})
+	</script>
+</body>
+</html>
